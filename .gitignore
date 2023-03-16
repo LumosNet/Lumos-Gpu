@@ -1,0 +1,14 @@
+*.pyc
+*.o
+*.a
+*.so
+*.exe
+*.run
+*.tar.gz
+*.w
+.idea
+.vscode
+data
+obj
+main
+main.exe
