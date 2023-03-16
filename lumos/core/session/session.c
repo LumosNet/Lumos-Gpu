@@ -9,17 +9,16 @@ Session *create_session(char *type)
     } else {
         sess->coretype = CPU;
     }
-    Graph *graph = sess->graph;
-    for (int i = 0; i < graph->layer_num; ++i){
-        Layer *l = graph->layers[i];
-        l->coretype = sess->coretype;
-    }
     return sess;
 }
 
 void bind_graph(Session *sess, Graph *graph)
 {
     sess->graph = graph;
+    for (int i = 0; i < graph->layer_num; ++i){
+        Layer *l = graph->layers[i];
+        l->coretype = sess->coretype;
+    }
 }
 
 void bind_train_data(Session *sess, char *path)

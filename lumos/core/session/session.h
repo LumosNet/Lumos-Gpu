@@ -79,7 +79,6 @@ typedef struct session{
     float *loss_gpu;
     float *truth_gpu;
     int *maxpool_index_gpu;
-
 } Session;
 
 Session *create_session(char *type);
