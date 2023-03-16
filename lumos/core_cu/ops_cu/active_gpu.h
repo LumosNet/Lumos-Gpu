@@ -1,12 +1,10 @@
 #ifndef ACTIVE_GPU_H
 #define ACTIVE_GPU_H
 
-#ifdef GPU
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "curand.h"
 #include "cublas_v2.h"
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +15,6 @@
 extern "C" {
 #endif
 
-#ifdef GPU
 typedef float   (*activate_gpu)(float);
 typedef float   (*gradient_gpu)(float);
 typedef activate_gpu ActivateGpu;
@@ -28,7 +25,6 @@ GradientGpu load_gradient_gpu(Activation TYPE);
 
 void activate_list_gpu(float *origin, int num, Activation TYPE);
 void gradient_list_gpu(float *origin, int num, Activation TYPE);
-#endif
 
 #ifdef  __cplusplus
 }

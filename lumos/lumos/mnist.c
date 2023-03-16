@@ -30,13 +30,13 @@ void full_connect_mnist () {
     append_layer2grpah(graph, l4);
     append_layer2grpah(graph, l5);
 
-    Session *sess = create_session();
+    Session *sess = create_session("gpu");
     bind_graph(sess, graph);
     create_train_scene(sess, 28, 28, 1, 1, 10, mnist_label2truth, "/usr/local/lumos/data/mnist/train.txt", "/usr/local/lumos/data/mnist/train_label.txt");
     init_train_scene(sess, 500, 20, 4, NULL);
     session_train(sess, 1, "./lumos.w");
 
-    Session *t_sess = create_session();
+    Session *t_sess = create_session("gpu");
     bind_graph(t_sess, graph);
     create_test_scene(t_sess, 28, 28, 1, 1, 10, mnist_label2truth, "/usr/local/lumos/data/mnist/test.txt", "/usr/local/lumos/data/mnist/test_label.txt");
     init_test_scene(t_sess, "./lumos.w");

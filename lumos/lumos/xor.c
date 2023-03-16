@@ -28,13 +28,13 @@ void xor () {
     append_layer2grpah(graph, l4);
     append_layer2grpah(graph, l5);
 
-    Session *sess = create_session();
+    Session *sess = create_session("gpu");
     bind_graph(sess, graph);
     create_train_scene(sess, 1, 2, 1, 1, 1, xor_label2truth, "/usr/local/lumos/data/xor/data.txt", "/usr/local/lumos/data/xor/label.txt");
     init_train_scene(sess, 500, 4, 2, NULL);
     session_train(sess, 10, "./lumos.w");
 
-    Session *t_sess = create_session();
+    Session *t_sess = create_session("gpu");
     bind_graph(t_sess, graph);
     create_test_scene(t_sess, 1, 2, 1, 1, 1, xor_label2truth, "/usr/local/lumos/data/xor/test.txt", "/usr/local/lumos/data/xor/label.txt");
     init_test_scene(t_sess, "./lumos.w");

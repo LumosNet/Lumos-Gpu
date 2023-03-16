@@ -25,7 +25,7 @@ extern "C" {
 void run_benchmarks(char *benchmark, int coretype);
 void run_all_benchmarks(char *benchmarks, int coretype);
 
-void run_unit_test(char *interface);
+// void run_unit_test(char *interface);
 
 void release_params_space(void **space, int num);
 

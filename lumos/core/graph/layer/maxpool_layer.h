@@ -11,9 +11,7 @@
 #include "cpu.h"
 #include "pooling.h"
 
-#ifdef GPU
 #include "maxpool_layer_gpu.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {

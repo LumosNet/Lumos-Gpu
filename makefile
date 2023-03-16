@@ -1,7 +1,7 @@
 LINUX=1
 GPU=1
 DEBUG=0
-TEST=0
+TEST=1
 
 ARCH=	-gencode arch=compute_50,code=[sm_50,compute_50] \
       	-gencode arch=compute_52,code=[sm_52,compute_52] \
@@ -25,7 +25,7 @@ VPATH=	./lib/: \
 		./lumos/core_cu/graph_cu/: \
 		./lumos/core_cu/ops_cu/: \
 		./lumos/core_cu/graph_cu/layer_cu/: \
-		./lumos/core_cu/graph_cu/loss_layer_cu/: \
+		./lumos/core_cu/graph_cu/loss_layer_cu/
 
 COMMON=	-Ilib \
 		-Ilumos/core/graph \
@@ -41,13 +41,12 @@ COMMON=	-Ilib \
 		-Ilumos/core_cu/graph_cu \
 		-Ilumos/core_cu/ops_cu \
 		-Ilumos/core_cu/graph_cu/layer_cu \
-		-Ilumos/core_cu/graph_cu/loss_layer_cu \
+		-Ilumos/core_cu/graph_cu/loss_layer_cu
 
 EXEC=lumos.exe
 OBJDIR=./obj/
 
 CC=gcc
-CPP=g++
 NVCC=nvcc
 
 LDFLAGS= -lm -pthread
@@ -100,7 +99,8 @@ EXECOBJA=lumos.o
 
 ifeq ($(TEST), 1)
 OBJ+= bias_call.o cpu_call.o gemm_call.o im2col_call.o image_call.o pooling_call.o \
-	  avgpool_layer_call.o batchnorm_layer_call.o connect_layer_call.o convolutional_layer_call.o im2col_layer_call.o maxpool_layer_call.o
+	  avgpool_layer_call.o batchnorm_layer_call.o connect_layer_call.o convolutional_layer_call.o im2col_layer_call.o maxpool_layer_call.o \
+	  mse_layer_call.o
 endif
 
 ifeq ($(TEST), 1)
@@ -134,9 +134,6 @@ all: obj $(EXEC)
 
 $(EXEC): $(OBJS) $(EXECOBJ)
 	$(CC) $(COMMON) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-
-$(OBJDIR)%.o: %.cpp $(DEPS)
-	$(CPP) $(COMMON) $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)%.o: %.c $(DEPS)
 	$(CC) $(COMMON) $(CFLAGS) -c $< -o $@

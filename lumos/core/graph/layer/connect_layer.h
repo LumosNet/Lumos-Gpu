@@ -12,9 +12,7 @@
 #include "cpu.h"
 #include "weights.h"
 
-#ifdef GPU
 #include "connect_layer_gpu.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {

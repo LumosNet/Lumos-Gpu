@@ -1,12 +1,10 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#ifdef GPU
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "curand.h"
 #include "cublas_v2.h"
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,10 +51,6 @@ char **load_test_label(Session *sess, int index);
 
 void save_weigths(Session *sess, char *path);
 void load_weights(Session *sess, char *path);
-
-// #ifdef GPU
-
-// #endif
 
 #ifdef __cplusplus
 }

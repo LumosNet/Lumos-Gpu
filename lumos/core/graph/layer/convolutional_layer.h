@@ -14,9 +14,7 @@
 #include "cpu.h"
 #include "weights.h"
 
-#ifdef GPU
 #include "convolutional_layer_gpu.h"
-#endif
 
 #ifdef __cplusplus
 extern "C"{
