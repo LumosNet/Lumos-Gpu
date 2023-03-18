@@ -18,7 +18,6 @@ extern "C" {
 #endif
 
 Layer *make_maxpool_layer(int ksize);
-
 void init_maxpool_layer(Layer *l, int w, int h, int c);
 
 void forward_maxpool_layer(Layer l, int num);

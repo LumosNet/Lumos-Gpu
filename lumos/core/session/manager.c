@@ -160,13 +160,12 @@ void set_graph_weight(Session *sess)
     Layer **layers = graph->layers;
     float *weights;
     float *update_weights;
-    if (sess->coretype == GPU){
-        weights = sess->weights_gpu;
-        update_weights = sess->update_weights_gpu;
-    } else {
-        weights = sess->weights;
-        update_weights = sess->update_weights;
-    }
+    float *weights_g;
+    float *update_weights_g;
+    weights = sess->weights;
+    update_weights = sess->update_weights;
+    weights_g = sess->weights_gpu;
+    update_weights_g = sess->update_weights_gpu;
     int weights_offset = 0;
     for (int i = 0; i < graph->layer_num; ++i)
     {
@@ -175,11 +174,15 @@ void set_graph_weight(Session *sess)
         {
             l->kernel_weights = weights + weights_offset;
             l->update_kernel_weights = update_weights + weights_offset;
+            l->kernel_weights_gpu = weights_g + weights_offset;
+            l->update_kernel_weights_gpu = update_weights_g + weights_offset;
             weights_offset += l->kernel_weights_size;
             if (l->bias)
             {
                 l->bias_weights = weights + weights_offset;
                 l->update_bias_weights = update_weights + weights_offset;
+                l->bias_weights_gpu = weights_g + weights_offset;
+                l->update_bias_weights_gpu = update_weights_g + weights_offset;
                 weights_offset += l->bias_weights_size;
             }
         }
@@ -320,13 +323,37 @@ void init_weights(Session *sess, char *weights_file)
         {
             Layer *l = layers[i];
             if (l->weights){
-                l->init_layer_weights(l);
+                Initializer init = sess->w_init;
+                if (0 == strcmp(init.type, "val_init")){
+                    val_init(l, init.val);
+                } else if (0 == strcmp(init.type, "uniform_init")){
+                    uniform_init(l, init.mean, init.variance);
+                } else if (0 == strcmp(init.type, "normal_init")){
+                    normal_init(l, init.mean, init.variance);
+                } else if (0 == strcmp(init.type, "xavier_uniform_init")){
+                    xavier_uniform_init(l);
+                } else if (0 == strcmp(init.type, "xavier_normal_init")){
+                    xavier_normal_init(l);
+                } else if (0 == strcmp(init.type, "kaiming_uniform_init")){
+                    kaiming_uniform_init(l, init.mode);
+                } else if (0 == strcmp(init.type, "kaiming_normal_init")){
+                    kaiming_normal_init(l, init.mode);
+                } else if (0 == strcmp(init.type, "he_init")){
+                    he_init(l);
+                } else {
+                    fprintf(stderr, "\nInitializer Error: no such kind of nInitializer\n");
+                    return ;
+                }
+            }
+            if (l->bias){
+                fill_cpu(l->bias_weights, l->bias_weights_size, 0, 1);
             }
         }
         fprintf(stderr, "\nInit Weights\n");
     }
     memcpy(sess->update_weights, sess->weights, sess->weights_size * sizeof(float));
     if (sess->coretype == GPU){
+        cudaMemcpy(sess->weights_gpu, sess->weights, sess->weights_size * sizeof(float), cudaMemcpyHostToDevice);
         cudaMemcpy(sess->update_weights_gpu, sess->weights_gpu, sess->weights_size*sizeof(float), cudaMemcpyDeviceToDevice);
     }
 }

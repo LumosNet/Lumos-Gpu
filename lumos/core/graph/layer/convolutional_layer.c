@@ -1,13 +1,9 @@
 #include "convolutional_layer.h"
 
-Layer *make_convolutional_layer(int filters, int ksize, int stride, int pad, int bias, int normalization, char *active, char *weights_init)
+Layer *make_convolutional_layer(int filters, int ksize, int stride, int pad, int bias, int normalization, char *active)
 {
     Layer *l = malloc(sizeof(Layer));
     l->type = CONVOLUTIONAL;
-    l->weights_init_type = "guass";
-    if (weights_init){
-        l->weights_init_type = weights_init;
-    }
     l->weights = 1;
 
     l->filters = filters;
@@ -23,7 +19,6 @@ Layer *make_convolutional_layer(int filters, int ksize, int stride, int pad, int
     Activation type = load_activate_type(active);
     l->active = type;
     l->gradient = type;
-    l->init_layer_weights = init_convolutional_weights;
 
     fprintf(stderr, "Convolutional   Layer    :    [filters=%2d, ksize=%2d, stride=%2d, pad=%2d, bias=%d, normalization=%d, active=%s]\n",
             l->filters, l->ksize, l->stride, l->pad, l->bias, l->batchnorm, l->active_str);
@@ -63,54 +58,6 @@ void init_convolutional_layer(Layer *l, int w, int h, int c)
 
     fprintf(stderr, "Convolutional   Layer    %3d*%3d*%3d ==> %3d*%3d*%3d\n",
             l->input_w, l->input_h, l->input_c, l->output_w, l->output_h, l->output_c);
-}
-
-void init_convolutional_weights(Layer *l)
-{
-    int offset = 0;
-    float *kernel_weights;
-    float *bias_weights;
-    float *kernel_weights_h;
-    float *bias_weights_h;
-    if (l->coretype == GPU){
-        kernel_weights = malloc(l->kernel_weights_size*sizeof(float));
-        bias_weights = malloc(l->bias_weights_size*sizeof(float));
-        kernel_weights_h = kernel_weights;
-        bias_weights_h = bias_weights;
-    } else {
-        kernel_weights = l->kernel_weights;
-        bias_weights = l->bias_weights;
-    }
-    for (int i = 0; i < l->filters; ++i)
-    {
-        if (0 == strcmp(l->weights_init_type, "uniform")){
-            uniform_init(l->index*2*(i+1), -1, 1, l->ksize * l->ksize, kernel_weights);
-        } else if (0 == strcmp(l->weights_init_type, "guass")){
-            guass_init(l->index*2*(i+1), 0, 1, l->ksize * l->ksize, kernel_weights);
-        } else if (0 == strcmp(l->weights_init_type, "xavier")){
-            xavier_init(l->index*2*(i+1), l->ksize, l->ksize, kernel_weights);
-        } else {
-            kaiming_init(l->index*2*(i+1), l->ksize, l->ksize, kernel_weights);
-        }
-        offset += l->ksize * l->ksize;
-        for (int j = 0; j < l->input_c - 1; ++j){
-            memcpy(kernel_weights + offset, kernel_weights, l->ksize * l->ksize * sizeof(float));
-            offset += l->ksize * l->ksize;
-        }
-        kernel_weights += offset;
-        offset = 0;
-    }
-    if (l->bias){
-        for (int i = 0; i < l->bias_weights_size; ++i){
-            bias_weights[i] = 0.01;
-        }
-    }
-    if (l->coretype == GPU){
-        cudaMemcpy(l->kernel_weights, kernel_weights_h, l->kernel_weights_size*sizeof(float), cudaMemcpyHostToDevice);
-        cudaMemcpy(l->bias_weights, bias_weights_h, l->bias_weights_size*sizeof(float), cudaMemcpyHostToDevice);
-        free(kernel_weights_h);
-        free(bias_weights_h);
-    }
 }
 
 void forward_convolutional_layer(Layer l, int num)

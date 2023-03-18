@@ -14,7 +14,6 @@ extern "C" {
 #endif
 
 Layer *make_avgpool_layer(int ksize);
-
 void init_avgpool_layer(Layer *l, int w, int h, int c);
 
 void forward_avgpool_layer(Layer l, int num);

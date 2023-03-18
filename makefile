@@ -1,7 +1,7 @@
 LINUX=1
 GPU=1
 DEBUG=0
-TEST=1
+TEST=0
 
 ARCH=	-gencode arch=compute_50,code=[sm_50,compute_50] \
       	-gencode arch=compute_52,code=[sm_52,compute_52] \
@@ -80,8 +80,8 @@ VPATH+=	./lumos_t \
 endif
 
 OBJ=	avgpool_layer.o connect_layer.o convolutional_layer.o graph.o im2col_layer.o layer.o maxpool_layer.o \
-		mse_layer.o \
-		active.o bias.o cpu.o gemm.o im2col.o image.o pooling.o random.o weights.o \
+		mse_layer.o weights_init.o \
+		active.o bias.o cpu.o gemm.o im2col.o image.o pooling.o random.o \
 		session.o manager.o dispatch.o \
 		progress_bar.o \
 		binary_f.o cfg_f.o text_f.o \

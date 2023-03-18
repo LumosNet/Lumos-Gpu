@@ -1,9 +1,10 @@
 #include "session.h"
 
-Session *create_session(char *type)
+Session *create_session(char *type, Initializer w_init)
 {
     Session *sess = malloc(sizeof(Session));
     sess->memory_size = 0;
+    sess->w_init = w_init;
     if (0 == strcmp(type, "gpu")){
         sess->coretype = GPU;
     } else {

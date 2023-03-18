@@ -8,6 +8,7 @@
 #include "text_f.h"
 #include "binary_f.h"
 #include "image.h"
+#include "weights_init.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,6 +70,7 @@ typedef struct session{
     int memory_size;
 
     Label2Truth label2truth;
+    Initializer w_init;
 
     float *workspace_gpu;
     float *input_gpu;
@@ -81,7 +83,7 @@ typedef struct session{
     int *maxpool_index_gpu;
 } Session;
 
-Session *create_session(char *type);
+Session *create_session(char *type, Initializer w_init);
 
 void bind_graph(Session *sess, Graph *graph);
 void bind_train_data(Session *sess, char *path);
