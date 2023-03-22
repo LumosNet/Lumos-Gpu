@@ -86,8 +86,7 @@ OBJ=	avgpool_layer.o connect_layer.o convolutional_layer.o graph.o im2col_layer.
 		progress_bar.o \
 		binary_f.o text_f.o \
 		str_ops.o \
-		cJSON_Utils.o cJSON.o \
-		lenet.o mnist.o xor.o
+		cJSON_Utils.o cJSON.o
 
 ifeq ($(GPU), 1)
 OBJ+= 	active_gpu.o bias_gpu.o cpu_gpu.o gemm_gpu.o im2col_gpu.o pooling_gpu.o \
